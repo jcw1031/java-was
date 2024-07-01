@@ -7,6 +7,7 @@ import java.net.Socket;
 
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = new ServerSocket(8080); // 8080 포트에서 서버를 엽니다.
         System.out.println("Listening for connection on port 8080 ....");
@@ -25,4 +26,5 @@ public class Main {
             }
         }
     }
+
 }
