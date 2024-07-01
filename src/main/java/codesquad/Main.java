@@ -1,33 +1,24 @@
 package codesquad;
 
-import codesquad.utils.ResourcesReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
+    private static final int MAXIMUM_THREAD_POOL_SIZE = 10;
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(8080);
-        log.debug("Listening for connection on port 8080 ....");
-
-        while (true) {
-            try (Socket clientSocket = serverSocket.accept()) {
-                log.debug("Client connected");
-
-                String data = ResourcesReader.readResource("static/index.html");
-                OutputStream clientOutput = clientSocket.getOutputStream();
-                clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
-                clientOutput.write("Content-Type: text/html\r\n".getBytes());
-                clientOutput.write("\r\n".getBytes());
-                clientOutput.write(data.getBytes());
-                clientOutput.flush();
+        ExecutorService executorService = Executors.newFixedThreadPool(MAXIMUM_THREAD_POOL_SIZE);
+        try (ServerSocket serverSocket = new ServerSocket(8080)) {
+            log.debug("Listening for connection on port 8080 ....");
+            while (true) {
+                executorService.execute(new HttpRequestHandler(serverSocket.accept()));
             }
         }
     }
