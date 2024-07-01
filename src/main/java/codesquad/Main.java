@@ -1,5 +1,6 @@
 package codesquad;
 
+import codesquad.utils.ResourcesReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +22,12 @@ public class Main {
             try (Socket clientSocket = serverSocket.accept()) {
                 log.debug("Client connected");
 
+                String data = ResourcesReader.readResource("static/index.html");
                 OutputStream clientOutput = clientSocket.getOutputStream();
                 clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
                 clientOutput.write("Content-Type: text/html\r\n".getBytes());
                 clientOutput.write("\r\n".getBytes());
-                clientOutput.write("<h1>Hello</h1>\r\n".getBytes());
+                clientOutput.write(data.getBytes());
                 clientOutput.flush();
             }
         }
