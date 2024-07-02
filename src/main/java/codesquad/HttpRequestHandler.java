@@ -25,24 +25,20 @@ public class HttpRequestHandler implements Runnable {
     @Override
     public void run() {
         try {
-            handle();
+            log.debug("Client connected");
+
+            String data = ResourcesReader.readResource("static/index.html");
+            printHttpRequest();
+
+            try (OutputStream clientOutput = socket.getOutputStream()) {
+                clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
+                clientOutput.write("Content-Type: text/html\r\n".getBytes());
+                clientOutput.write("\r\n".getBytes());
+                clientOutput.write(data.getBytes());
+                clientOutput.flush();
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
-        }
-    }
-
-    private void handle() throws IOException {
-        log.debug("Client connected");
-
-        String data = ResourcesReader.readResource("static/index.html");
-        printHttpRequest();
-
-        try (OutputStream clientOutput = socket.getOutputStream()) {
-            clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
-            clientOutput.write("Content-Type: text/html\r\n".getBytes());
-            clientOutput.write("\r\n".getBytes());
-            clientOutput.write(data.getBytes());
-            clientOutput.flush();
         }
     }
 
