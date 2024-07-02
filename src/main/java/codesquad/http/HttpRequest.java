@@ -21,7 +21,10 @@ public class HttpRequest {
     }
 
     public static HttpRequest fromText(String request) {
-        //TODO request가 null인 경우 처리
+        if (request == null || request.isEmpty()) {
+            //TODO 커스텀 Exception을 만들어 사용하는 것은 어떨지 생각해보기
+            throw new IllegalArgumentException("[ERROR] HTTP request의 내용이 없습니다.");
+        }
 
         String[] lines = request.split(System.lineSeparator());
         String[] requestLine = lines[0].split(" ");
