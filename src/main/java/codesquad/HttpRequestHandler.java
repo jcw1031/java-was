@@ -1,5 +1,6 @@
 package codesquad;
 
+import codesquad.http.HttpRequest;
 import codesquad.utils.ResourcesReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,8 @@ public class HttpRequestHandler implements Runnable {
             request.append(line)
                     .append(System.lineSeparator());
         }
-        log.debug("request = {}", request);
+        HttpRequest httpRequest = HttpRequest.fromText(request.toString());
+        log.debug("httpRequest = {}", httpRequest);
     }
 
 }

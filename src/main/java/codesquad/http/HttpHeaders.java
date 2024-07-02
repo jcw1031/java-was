@@ -1,5 +1,7 @@
 package codesquad.http;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,30 @@ public class HttpHeaders {
 
     public static HttpHeaders empty() {
         return new HttpHeaders();
+    }
+
+    public static HttpHeaders fromText(String headersText) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        String[] lines = headersText.split(System.lineSeparator());
+        Arrays.stream(lines)
+                .map(line -> line.split(": ", 2))
+                .forEach(httpHeaders::putHeader);
+        return httpHeaders;
+    }
+
+    private void putHeader(String[] nameAndValues) {
+        String name = nameAndValues[0].trim();
+        Arrays.stream(nameAndValues[1].split(";\\s*"))
+                .forEach(value -> addValue(name, value));
+    }
+
+    public void addValue(String name, String value) {
+        this.headers.computeIfAbsent(name, key -> new ArrayList<>())
+                .add(value);
+    }
+
+    public void addValues(String name, List<String> values) {
+        values.forEach(value -> addValue(name, value));
     }
 
     public List<String> getValues(String name) {
