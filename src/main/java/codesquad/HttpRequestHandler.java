@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class HttpRequestHandler implements Runnable {
@@ -29,6 +28,7 @@ public class HttpRequestHandler implements Runnable {
     public void run() {
         try {
             String request = readHttpRequest();
+            log.debug("request = {}", request);
             HttpRequest httpRequest = HttpRequest.fromText(request);
             log.debug("httpRequest = {}", httpRequest);
 
@@ -68,7 +68,7 @@ public class HttpRequestHandler implements Runnable {
 
     private String readHttpRequest() throws IOException {
         InputStream inputStream = socket.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder request = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null && !line.isEmpty()) {
