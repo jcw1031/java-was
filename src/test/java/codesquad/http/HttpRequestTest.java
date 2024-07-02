@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class HttpRequestTest {
@@ -54,7 +55,7 @@ class HttpRequestTest {
             @Test
             void 성공적으로_파싱할_수_있다() {
                 httpRequest = HttpRequest.fromText(request);
-                Assertions.assertAll(
+                assertAll(
                         () -> assertThat(httpRequest).isNotNull(),
                         () -> assertThat(httpRequest.uri()).isEqualTo("/index.html"),
                         () -> assertThat(httpRequest.method()).isEqualTo("GET"),

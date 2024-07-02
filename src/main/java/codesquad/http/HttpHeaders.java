@@ -16,6 +16,10 @@ public class HttpHeaders {
     }
 
     public static HttpHeaders fromText(String headersText) {
+        if (headersText == null || headersText.isEmpty()) {
+            throw new IllegalArgumentException("[ERROR] HTTP header의 내용이 없습니다.");
+        }
+
         HttpHeaders httpHeaders = new HttpHeaders();
         String[] lines = headersText.split(System.lineSeparator());
         Arrays.stream(lines)
