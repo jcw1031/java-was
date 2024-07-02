@@ -4,9 +4,13 @@ import codesquad.utils.ResourcesReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class HttpRequestHandler implements Runnable {
 
@@ -31,6 +35,8 @@ public class HttpRequestHandler implements Runnable {
         log.debug("Client connected");
 
         String data = ResourcesReader.readResource("static/index.html");
+        printHttpRequest();
+
         try (OutputStream clientOutput = socket.getOutputStream()) {
             clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
             clientOutput.write("Content-Type: text/html\r\n".getBytes());
@@ -38,6 +44,18 @@ public class HttpRequestHandler implements Runnable {
             clientOutput.write(data.getBytes());
             clientOutput.flush();
         }
+    }
+
+    private void printHttpRequest() throws IOException {
+        InputStream inputStream = socket.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        StringBuilder request = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null && !line.isEmpty()) {
+            request.append(line)
+                    .append(System.lineSeparator());
+        }
+        log.debug("request = {}", request);
     }
 
 }
