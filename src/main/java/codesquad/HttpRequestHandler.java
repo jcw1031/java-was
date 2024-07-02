@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 public class HttpRequestHandler implements Runnable {
 
@@ -21,29 +22,51 @@ public class HttpRequestHandler implements Runnable {
 
     public HttpRequestHandler(Socket socket) {
         this.socket = socket;
+        log.debug("Client connected");
     }
 
     @Override
     public void run() {
         try {
-            log.debug("Client connected");
+            String request = readHttpRequest();
+            HttpRequest httpRequest = HttpRequest.fromText(request);
+            log.debug("httpRequest = {}", httpRequest);
 
-            String data = ResourcesReader.readResource("static/index.html");
-            printHttpRequest();
-
+            Optional<String> data = ResourcesReader.readResource("static" + httpRequest.uri());
             try (OutputStream clientOutput = socket.getOutputStream()) {
-                clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
-                clientOutput.write("Content-Type: text/html\r\n".getBytes());
-                clientOutput.write("\r\n".getBytes());
-                clientOutput.write(data.getBytes());
-                clientOutput.flush();
+                data.ifPresentOrElse(text -> responseOK(clientOutput, text),
+                        () -> responseNotFound(clientOutput));
             }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void printHttpRequest() throws IOException {
+    private void responseOK(OutputStream clientOutput, String data) {
+        try {
+            clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
+            clientOutput.write("Content-Type: text/html\r\n".getBytes());
+            clientOutput.write("\r\n".getBytes());
+            clientOutput.write(data.getBytes());
+            clientOutput.flush();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    private void responseNotFound(OutputStream clientOutput) {
+        try {
+            clientOutput.write("HTTP/1.1 404 Not Found\r\n".getBytes());
+            clientOutput.write("Content-Type: text/html\r\n".getBytes());
+            clientOutput.write("\r\n".getBytes());
+            clientOutput.write("<h1>404 Not Found</h1>".getBytes());
+            clientOutput.flush();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    private String readHttpRequest() throws IOException {
         InputStream inputStream = socket.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         StringBuilder request = new StringBuilder();
@@ -52,8 +75,7 @@ public class HttpRequestHandler implements Runnable {
             request.append(line)
                     .append(System.lineSeparator());
         }
-        HttpRequest httpRequest = HttpRequest.fromText(request.toString());
-        log.debug("httpRequest = {}", httpRequest);
+        return request.toString();
     }
 
 }
