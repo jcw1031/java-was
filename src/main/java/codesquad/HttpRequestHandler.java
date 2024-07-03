@@ -1,6 +1,7 @@
 package codesquad;
 
 import codesquad.http.HttpRequest;
+import codesquad.http.HttpRequestParser;
 import codesquad.utils.ResourcesReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +19,18 @@ public class HttpRequestHandler implements Runnable {
     private final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private final Socket socket;
+    private final HttpRequestParser httpRequestParser;
 
-    public HttpRequestHandler(Socket socket) {
+    public HttpRequestHandler(Socket socket, HttpRequestParser httpRequestParser) {
         this.socket = socket;
+        this.httpRequestParser = httpRequestParser;
         log.debug("Client connected");
     }
 
     @Override
     public void run() {
         try {
-            String request = readHttpRequest();
-            log.debug("request = {}", request);
-            HttpRequest httpRequest = HttpRequest.fromText(request);
+            HttpRequest httpRequest = httpRequestParser.parse(readHttpRequest());
             log.debug("httpRequest = {}", httpRequest);
 
             Optional<String> data = ResourcesReader.readResource("static" + httpRequest.uri());
