@@ -30,7 +30,7 @@ public class HttpHeaders {
 
     private void putHeader(String[] nameAndValues) {
         String name = nameAndValues[0].trim();
-        Arrays.stream(nameAndValues[1].split(";\\s*"))
+        Arrays.stream(nameAndValues[1].split(",\\s*"))
                 .forEach(value -> addValue(name, value));
     }
 
