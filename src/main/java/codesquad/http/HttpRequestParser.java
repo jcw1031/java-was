@@ -17,13 +17,13 @@ public class HttpRequestParser {
             throw new IllegalArgumentException("[ERROR] HTTP request의 내용이 없습니다.");
         }
 
-        String[] lines = request.split(System.lineSeparator());
+        String[] lines = request.split("\r\n");
         String[] requestLine = lines[0].split(" ");
         String method = requestLine[0];
         String uri = requestLine[1];
         String headers = Arrays.stream(lines)
                 .skip(1)
-                .collect(Collectors.joining(System.lineSeparator()));
+                .collect(Collectors.joining("\r\n"));
         HttpHeaders httpHeaders = headersParser.parse(headers);
         return new HttpRequest(uri, method, httpHeaders, null);
     }

@@ -10,7 +10,7 @@ public class HttpHeadersParser {
         }
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        String[] lines = headersText.split(System.lineSeparator());
+        String[] lines = headersText.split("\r\n");
         Arrays.stream(lines)
                 .map(line -> line.split(": ", 2))
                 .forEach(httpHeaders::putHeader);

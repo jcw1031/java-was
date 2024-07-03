@@ -2,7 +2,9 @@ package codesquad;
 
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpRequestParser;
-import codesquad.utils.ResourcesReader;
+import codesquad.http.MediaType;
+import codesquad.resource.Resource;
+import codesquad.resource.ResourcesReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +35,9 @@ public class HttpRequestHandler implements Runnable {
             HttpRequest httpRequest = httpRequestParser.parse(readHttpRequest());
             log.debug("httpRequest = {}", httpRequest);
 
-            Optional<String> data = ResourcesReader.readResource("static" + httpRequest.uri());
+            Optional<Resource> readResource = ResourcesReader.readResource("static" + httpRequest.uri());
             try (OutputStream clientOutput = socket.getOutputStream()) {
-                data.ifPresentOrElse(text -> responseOK(clientOutput, text),
+                readResource.ifPresentOrElse(resource -> responseOK(clientOutput, resource),
                         () -> responseNotFound(clientOutput));
             }
         } catch (IOException e) {
@@ -43,12 +45,17 @@ public class HttpRequestHandler implements Runnable {
         }
     }
 
-    private void responseOK(OutputStream clientOutput, String data) {
+    private void responseOK(OutputStream clientOutput, Resource resource) {
+        String resourceExtension = resource.getExtension();
+        MediaType mediaType = MediaType.find(resourceExtension)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 지원하지 않는 파일 형식입니다."));
+
         try {
-            clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
-            clientOutput.write("Content-Type: text/html\r\n".getBytes());
+            clientOutput.write(("HTTP/1.1 200 OK" + "\r\n").getBytes());
+            clientOutput.write(("Content-Length: " + resource.getContentLength() + "\r\n").getBytes());
+            clientOutput.write(("Content-Type: " + mediaType.getValue() + "\r\n").getBytes());
             clientOutput.write("\r\n".getBytes());
-            clientOutput.write(data.getBytes());
+            clientOutput.write(resource.getContent());
             clientOutput.flush();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -57,8 +64,8 @@ public class HttpRequestHandler implements Runnable {
 
     private void responseNotFound(OutputStream clientOutput) {
         try {
-            clientOutput.write("HTTP/1.1 404 Not Found\r\n".getBytes());
-            clientOutput.write("Content-Type: text/html\r\n".getBytes());
+            clientOutput.write(("HTTP/1.1 404 Not Found" + "\r\n").getBytes());
+            clientOutput.write(("Content-Type: text/html" + "\r\n").getBytes());
             clientOutput.write("\r\n".getBytes());
             clientOutput.write("<h1>404 Not Found</h1>".getBytes());
             clientOutput.flush();
@@ -74,7 +81,7 @@ public class HttpRequestHandler implements Runnable {
         String line;
         while ((line = reader.readLine()) != null && !line.isEmpty()) {
             request.append(line)
-                    .append(System.lineSeparator());
+                    .append("\r\n");
         }
         return request.toString();
     }
