@@ -56,7 +56,7 @@ class HttpHeadersParserTest {
                     "Accept: text/html\r\n";
 
             @Test
-            void 성공적으로_파싱할_수_있다() {
+            void 성공적으로_파싱해_HttpHeaders_인스턴스를_생성한다() {
                 HttpHeaders httpHeaders = headersParser.parse(headersText);
                 assertAll(
                         () -> assertThat(httpHeaders).isNotNull(),
