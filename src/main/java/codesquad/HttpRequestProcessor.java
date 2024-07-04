@@ -18,16 +18,16 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Optional;
 
-public class HttpRequestHandler implements Runnable {
+public class HttpRequestProcessor implements Runnable {
 
-    private final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);
+    private final Logger log = LoggerFactory.getLogger(HttpRequestProcessor.class);
 
     private final Socket socket;
     private final HttpHeadersParser headersParser = new HttpHeadersParser();
     private final QueryParametersParser queryParametersParser = new QueryParametersParser();
     private final HttpRequestParser requestParser = new HttpRequestParser(headersParser, queryParametersParser);
 
-    public HttpRequestHandler(Socket socket) {
+    public HttpRequestProcessor(Socket socket) {
         this.socket = socket;
         log.debug("Client connected");
     }

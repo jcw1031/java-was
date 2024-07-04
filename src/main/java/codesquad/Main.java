@@ -1,8 +1,5 @@
 package codesquad;
 
-import codesquad.http.parser.HttpHeadersParser;
-import codesquad.http.parser.HttpRequestParser;
-import codesquad.http.parser.QueryParametersParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +19,7 @@ public class Main {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             log.debug("Listening for connection on port 8080 ....");
             while (true) {
-                executorService.execute(new HttpRequestHandler(serverSocket.accept()));
+                executorService.execute(new HttpRequestProcessor(serverSocket.accept()));
             }
         }
     }
