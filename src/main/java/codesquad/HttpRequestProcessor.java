@@ -1,10 +1,9 @@
 package codesquad;
 
 import codesquad.http.HttpRequest;
-import codesquad.http.parser.HttpHeadersParser;
-import codesquad.http.parser.HttpRequestParser;
 import codesquad.http.MediaType;
-import codesquad.http.parser.QueryParametersParser;
+import codesquad.http.parser.HttpRequestParser;
+import codesquad.http.parser.ParsersFactory;
 import codesquad.resource.Resource;
 import codesquad.resource.ResourcesReader;
 import org.slf4j.Logger;
@@ -23,9 +22,7 @@ public class HttpRequestProcessor implements Runnable {
     private final Logger log = LoggerFactory.getLogger(HttpRequestProcessor.class);
 
     private final Socket socket;
-    private final HttpHeadersParser headersParser = new HttpHeadersParser();
-    private final QueryParametersParser queryParametersParser = new QueryParametersParser();
-    private final HttpRequestParser requestParser = new HttpRequestParser(headersParser, queryParametersParser);
+    private final HttpRequestParser requestParser = ParsersFactory.getHttpRequestParser();
 
     public HttpRequestProcessor(Socket socket) {
         this.socket = socket;
