@@ -20,6 +20,9 @@ public class HttpResponse {
                 headers.toText() + CRLF +
                 CRLF;
         byte[] headerBytes = responseHeader.getBytes();
+        if (body == null) {
+            return headerBytes;
+        }
         byte[] responseBytes = new byte[headerBytes.length + body.length];
         System.arraycopy(headerBytes, 0, responseBytes, 0, headerBytes.length);
         System.arraycopy(body, 0, responseBytes, headerBytes.length, body.length);

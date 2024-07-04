@@ -2,8 +2,12 @@ package codesquad.handler;
 
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
+import codesquad.model.User;
+import codesquad.model.UserRepository;
 
 public class UserRegistrationHandler extends RequestHandler {
+
+    private final UserRepository userRepository = new UserRepository();
 
     @Override
     public HttpResponse handle(HttpRequest httpRequest) {
@@ -14,7 +18,12 @@ public class UserRegistrationHandler extends RequestHandler {
         String password = httpRequest.firstParameterValue("password")
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 회원가입 비밀번호가 비어있습니다."));
 
-        return null;
+        User user = new User(userId, nickname, password);
+        boolean success = userRepository.save(user);
+        if (success) {
+            return responseGenerator.sendRedirect(httpRequest, "/login");
+        }
+        return responseGenerator.sendBadRequest(httpRequest);
     }
 
 }
