@@ -47,6 +47,10 @@ public class HttpRequest {
                 : Optional.of(this.body);
     }
 
+    public Optional<String> firstParameterValue(String parameterName) {
+        return parameters.getFirstValue(parameterName);
+    }
+
     @Override
     public String toString() {
         return """

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class QueryParameters {
 
@@ -20,6 +21,15 @@ public class QueryParameters {
 
     public boolean isExists() {
         return !parameters.isEmpty();
+    }
+
+    public Optional<String> getFirstValue(String name) {
+        if (parameters.containsKey(name)) {
+            String firstValue = parameters.get(name)
+                    .get(0);
+            return Optional.of(firstValue);
+        }
+        return Optional.empty();
     }
 
     @Override

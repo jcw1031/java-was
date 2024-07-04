@@ -22,12 +22,10 @@ public final class ResourcesReader {
         if (file.isDirectory()) {
             return Optional.of(Resource.of(file, null));
         }
-        log.info("file.isDirectory() = {}", file.isDirectory());
         try (FileInputStream inputStream = new FileInputStream((file))) {
             byte[] content = new byte[(int) file.length()];
             inputStream.read(content);
             Resource resource = Resource.of(file, content);
-            log.info("resource = {}", resource);
             return Optional.of(resource);
         } catch (IOException e) {
             log.error("[ERROR] 파일을 읽을 수 없습니다.", e);
