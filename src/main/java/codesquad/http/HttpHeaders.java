@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class HttpHeaders {
 
@@ -41,6 +42,15 @@ public class HttpHeaders {
 
         List<String> values = this.headers.getOrDefault(name, Collections.emptyList());
         return Collections.unmodifiableList(values);
+    }
+
+    public String toText() {
+        return headers.entrySet()
+                .stream()
+                .flatMap(entry -> entry.getValue()
+                        .stream()
+                        .map(value -> entry.getKey() + ": " + value + "\r\n"))
+                .collect(Collectors.joining());
     }
 
     @Override
