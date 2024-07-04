@@ -1,8 +1,10 @@
 package codesquad;
 
 import codesquad.http.HttpRequest;
-import codesquad.http.HttpRequestParser;
+import codesquad.http.parser.HttpHeadersParser;
+import codesquad.http.parser.HttpRequestParser;
 import codesquad.http.MediaType;
+import codesquad.http.parser.QueryParametersParser;
 import codesquad.resource.Resource;
 import codesquad.resource.ResourcesReader;
 import org.slf4j.Logger;
@@ -21,31 +23,32 @@ public class HttpRequestHandler implements Runnable {
     private final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private final Socket socket;
-    private final HttpRequestParser httpRequestParser;
+    private final HttpHeadersParser headersParser = new HttpHeadersParser();
+    private final QueryParametersParser queryParametersParser = new QueryParametersParser();
+    private final HttpRequestParser requestParser = new HttpRequestParser(headersParser, queryParametersParser);
 
-    public HttpRequestHandler(Socket socket, HttpRequestParser httpRequestParser) {
+    public HttpRequestHandler(Socket socket) {
         this.socket = socket;
-        this.httpRequestParser = httpRequestParser;
         log.debug("Client connected");
     }
 
     @Override
     public void run() {
         try {
-            HttpRequest httpRequest = httpRequestParser.parse(readHttpRequest());
+            HttpRequest httpRequest = requestParser.parse(readHttpRequest());
             log.debug("httpRequest = {}", httpRequest);
 
             Optional<Resource> readResource = ResourcesReader.readResource("static" + httpRequest.uri());
             try (OutputStream clientOutput = socket.getOutputStream()) {
-                readResource.ifPresentOrElse(resource -> responseOK(clientOutput, resource),
-                        () -> responseNotFound(clientOutput));
+                readResource.ifPresentOrElse(resource -> sendOK(clientOutput, resource),
+                        () -> sendNotFound(clientOutput));
             }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void responseOK(OutputStream clientOutput, Resource resource) {
+    private void sendOK(OutputStream clientOutput, Resource resource) {
         String resourceExtension = resource.getExtension();
         MediaType mediaType = MediaType.find(resourceExtension)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 지원하지 않는 파일 형식입니다."));
@@ -62,7 +65,7 @@ public class HttpRequestHandler implements Runnable {
         }
     }
 
-    private void responseNotFound(OutputStream clientOutput) {
+    private void sendNotFound(OutputStream clientOutput) {
         try {
             clientOutput.write(("HTTP/1.1 404 Not Found" + "\r\n").getBytes());
             clientOutput.write(("Content-Type: text/html" + "\r\n").getBytes());

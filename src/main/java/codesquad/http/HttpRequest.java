@@ -8,12 +8,14 @@ public class HttpRequest {
 
     private final String uri;
     private final String method;
+    private final QueryParameters parameters;
     private final HttpHeaders headers;
     private final String body;
 
-    public HttpRequest(String uri, String method, HttpHeaders headers, String body) {
+    public HttpRequest(String uri, String method, QueryParameters parameters, HttpHeaders headers, String body) {
         this.uri = uri;
         this.method = method;
+        this.parameters = parameters;
         this.headers = headers;
         this.body = body;
     }
@@ -45,10 +47,11 @@ public class HttpRequest {
                 HttpRequest{
                 \turi='%s',
                 \tmethod='%s',
+                \tparameters=%s,
                 \theaders='%s',
                 \tbody='%s'
                 }
-                """.formatted(this.uri, this.method, headers, body().orElse(""));
+                """.formatted(this.uri, this.method, parameters, headers, body().orElse(""));
     }
 
 }
