@@ -1,9 +1,11 @@
 package codesquad.http;
 
+import codesquad.format.Parser;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class HttpRequestParser {
+public class HttpRequestParser implements Parser<HttpRequest> {
 
     private final HttpHeadersParser headersParser;
 
@@ -11,13 +13,14 @@ public class HttpRequestParser {
         this.headersParser = headersParser;
     }
 
-    public HttpRequest parse(String request) {
-        if (request == null || request.isEmpty()) {
+    @Override
+    public HttpRequest parse(String requestText) {
+        if (requestText == null || requestText.isEmpty()) {
             //TODO 커스텀 Exception을 만들어 사용하는 것은 어떨지 생각해보기
             throw new IllegalArgumentException("[ERROR] HTTP request의 내용이 없습니다.");
         }
 
-        String[] lines = request.split("\r\n");
+        String[] lines = requestText.split("\r\n");
         String[] requestLine = lines[0].split(" ");
         String method = requestLine[0];
         String uri = requestLine[1];

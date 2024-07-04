@@ -1,9 +1,12 @@
 package codesquad.http;
 
+import codesquad.format.Parser;
+
 import java.util.Arrays;
 
-public class HttpHeadersParser {
+public class HttpHeadersParser implements Parser<HttpHeaders> {
 
+    @Override
     public HttpHeaders parse(String headersText) {
         if (headersText == null || headersText.isEmpty()) {
             throw new IllegalArgumentException("[ERROR] HTTP header의 내용이 없습니다.");
