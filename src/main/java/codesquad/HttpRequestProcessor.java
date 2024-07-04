@@ -1,11 +1,11 @@
 package codesquad;
 
+import codesquad.handler.HandlersMapper;
+import codesquad.handler.RequestHandler;
 import codesquad.http.HttpRequest;
-import codesquad.http.MediaType;
+import codesquad.http.HttpResponse;
 import codesquad.http.parser.HttpRequestParser;
 import codesquad.http.parser.ParsersFactory;
-import codesquad.resource.Resource;
-import codesquad.resource.ResourcesReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Optional;
 
 public class HttpRequestProcessor implements Runnable {
 
@@ -23,9 +22,11 @@ public class HttpRequestProcessor implements Runnable {
 
     private final Socket socket;
     private final HttpRequestParser requestParser = ParsersFactory.getHttpRequestParser();
+    private final HandlersMapper handlersMapper;
 
-    public HttpRequestProcessor(Socket socket) {
+    public HttpRequestProcessor(Socket socket, HandlersMapper handlersMapper) {
         this.socket = socket;
+        this.handlersMapper = handlersMapper;
         log.debug("Client connected");
     }
 
@@ -35,42 +36,13 @@ public class HttpRequestProcessor implements Runnable {
             HttpRequest httpRequest = requestParser.parse(readHttpRequest());
             log.debug("httpRequest = {}", httpRequest);
 
-            Optional<Resource> readResource = ResourcesReader.readResource("static" + httpRequest.uri());
+            RequestHandler requestHandler = handlersMapper.getRequestHandler(httpRequest);
+            HttpResponse httpResponse = requestHandler.handle(httpRequest);
             try (OutputStream clientOutput = socket.getOutputStream()) {
-                readResource.ifPresentOrElse(resource -> sendOK(clientOutput, resource),
-                        () -> sendNotFound(clientOutput));
+                clientOutput.write(httpResponse.toBytes());
             }
         } catch (IOException e) {
             log.error(e.getMessage());
-        }
-    }
-
-    private void sendOK(OutputStream clientOutput, Resource resource) {
-        String resourceExtension = resource.getExtension();
-        MediaType mediaType = MediaType.find(resourceExtension)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 지원하지 않는 파일 형식입니다."));
-
-        try {
-            clientOutput.write(("HTTP/1.1 200 OK" + "\r\n").getBytes());
-            clientOutput.write(("Content-Length: " + resource.getContentLength() + "\r\n").getBytes());
-            clientOutput.write(("Content-Type: " + mediaType.getValue() + "\r\n").getBytes());
-            clientOutput.write("\r\n".getBytes());
-            clientOutput.write(resource.getContent());
-            clientOutput.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    private void sendNotFound(OutputStream clientOutput) {
-        try {
-            clientOutput.write(("HTTP/1.1 404 Not Found" + "\r\n").getBytes());
-            clientOutput.write(("Content-Type: text/html" + "\r\n").getBytes());
-            clientOutput.write("\r\n".getBytes());
-            clientOutput.write("<h1>404 Not Found</h1>".getBytes());
-            clientOutput.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
         }
     }
 
