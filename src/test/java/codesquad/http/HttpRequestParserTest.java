@@ -27,7 +27,7 @@ class HttpRequestParserTest {
     class parse_메서드는 {
 
         @Nested
-        class 비어있는_값이_들어오면 {
+        class 비어있는_값이_들어오는_경우 {
 
             String emptyRequest = "";
 
@@ -40,7 +40,7 @@ class HttpRequestParserTest {
         }
 
         @Nested
-        class null이_들어오면 {
+        class null이_들어오는_경우 {
 
             String nullRequest = null;
 
@@ -53,7 +53,7 @@ class HttpRequestParserTest {
         }
 
         @Nested
-        class 정상적인_HTTP_request가_들어오면 {
+        class 정상적인_HTTP_request가_들어오는_경우 {
 
             String request = "GET /index.html HTTP/1.1\r\n" +
                     "Host: localhost:8080\r\n" +
@@ -61,7 +61,7 @@ class HttpRequestParserTest {
                     "\r\n";
 
             @Test
-            void 성공적으로_파싱할_수_있다() {
+            void 성공적으로_파싱해_HttpRequest_인스턴스를_생성한다() {
                 HttpRequest httpRequest = requestParser.parse(request);
                 assertAll(
                         () -> assertThat(httpRequest).isNotNull(),
