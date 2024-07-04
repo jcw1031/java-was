@@ -29,6 +29,8 @@ public class HttpRequestParser implements Parser<HttpRequest> {
         String[] requestLine = lines[0].split(" ");
         String method = requestLine[0];
         String uri = requestLine[1];
+        String httpVersion = requestLine[2];
+
         String headers = Arrays.stream(lines)
                 .skip(1)
                 .collect(Collectors.joining("\r\n"));
@@ -37,7 +39,7 @@ public class HttpRequestParser implements Parser<HttpRequest> {
         if (queryParameters.isExists()) {
             uri = uri.split("\\?")[0];
         }
-        return new HttpRequest(uri, method, queryParameters, httpHeaders, null);
+        return new HttpRequest(uri, method, httpVersion, queryParameters, httpHeaders, null);
     }
 
 }
