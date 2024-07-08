@@ -5,9 +5,21 @@ import codesquad.http.HttpResponse;
 import codesquad.model.User;
 import codesquad.model.UserRepository;
 
-public class UserRegistrationHandler extends RequestHandler {
+public final class UserRegistrationHandler extends RequestHandler {
+
+    private static UserRegistrationHandler INSTANCE = new UserRegistrationHandler();
 
     private final UserRepository userRepository = new UserRepository();
+
+    private UserRegistrationHandler() {
+    }
+
+    public static UserRegistrationHandler getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new UserRegistrationHandler();
+        }
+        return INSTANCE;
+    }
 
     @Override
     public HttpResponse handle(HttpRequest httpRequest) {
