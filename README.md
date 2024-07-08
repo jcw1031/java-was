@@ -30,6 +30,6 @@
 
 #### 3-1단계
 
-- [ ] 회원가입 요청을 HTTP POST 메서드로 변경
-    - [ ] GET으로 요청이 오면 405 Method Not Allowed 응답
+- [x] 회원가입 요청을 HTTP POST 메서드로 변경
+    - [ ] GET으로 요청이 오면 405 Method Not Allowed 응답(나중에 구현하기)
 - [ ] HTTP redirection 기능을 사용해 회원가입 후 메인 페이지로 이동
