@@ -58,7 +58,7 @@ public final class UserRegistrationHandler extends RequestHandler {
         User user = new User(userId, nickname, password);
         boolean success = userRepository.save(user);
         if (success) {
-            return responseGenerator.sendRedirect(httpRequest, "/login");
+            return responseGenerator.sendRedirect(httpRequest, "/");
         }
         return responseGenerator.sendBadRequest(httpRequest);
     }
