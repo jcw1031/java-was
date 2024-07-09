@@ -2,6 +2,7 @@ package codesquad.handler;
 
 import codesquad.http.HttpHeaders;
 import codesquad.http.HttpRequest;
+import codesquad.http.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,13 +29,13 @@ class UserRegistrationHandlerTest {
             HttpRequest httpRequest = new HttpRequest(null, httpMethod, null, null, null, null);
             assertThatThrownBy(() -> userRegistrationHandler.handle(httpRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("[ERROR] 회원가입 요청은 POST 메서드여야 합니다.");
+                    .hasMessageContaining("[ERROR] 요청은 POST 메서드여야 합니다.");
         }
 
         @Test
         void content_type이_x_www_form_urlencoded가_아니면_예외가_발생한다() {
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.addValue(HttpHeaders.CONTENT_TYPE, "application/json");
+            httpHeaders.addValue(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.getValue());
             HttpRequest httpRequest = new HttpRequest(null, "POST", null, null, httpHeaders, null);
             assertThatThrownBy(() -> userRegistrationHandler.handle(httpRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -44,7 +45,7 @@ class UserRegistrationHandlerTest {
         @Test
         void request_body가_없으면_예외가_발생한다() {
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.addValue(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
+            httpHeaders.addValue(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED.getValue());
             HttpRequest httpRequest = new HttpRequest(null, "POST", null, null, httpHeaders, "");
             assertThatThrownBy(() -> userRegistrationHandler.handle(httpRequest))
                     .isInstanceOf(IllegalArgumentException.class)
