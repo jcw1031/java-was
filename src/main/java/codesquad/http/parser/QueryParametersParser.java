@@ -9,9 +9,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 
-public class QueryParametersParser implements Parser<QueryParameters> {
+public final class QueryParametersParser implements Parser<QueryParameters> {
+
+    private static QueryParametersParser instance;
 
     private final Logger log = LoggerFactory.getLogger(QueryParametersParser.class);
+
+    private QueryParametersParser() {
+    }
+
+    public static QueryParametersParser getInstance() {
+        if (instance == null) {
+            instance = new QueryParametersParser();
+        }
+        return instance;
+    }
 
     @Override
     public QueryParameters parse(String queryString) {

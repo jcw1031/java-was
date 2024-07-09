@@ -10,16 +10,16 @@ import java.util.Optional;
 
 public final class StaticResourceHandler extends RequestHandler {
 
-    private static StaticResourceHandler INSTANCE = new StaticResourceHandler();
+    private static StaticResourceHandler instance = new StaticResourceHandler();
 
     private StaticResourceHandler() {
     }
 
     public static StaticResourceHandler getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new StaticResourceHandler();
+        if (instance == null) {
+            instance = new StaticResourceHandler();
         }
-        return INSTANCE;
+        return instance;
     }
 
     @Override

@@ -5,7 +5,19 @@ import codesquad.http.HttpHeaders;
 
 import java.util.Arrays;
 
-public class HttpHeadersParser implements Parser<HttpHeaders> {
+public final class HttpHeadersParser implements Parser<HttpHeaders> {
+
+    private static HttpHeadersParser instance;
+
+    private HttpHeadersParser() {
+    }
+
+    public static HttpHeadersParser getInstance() {
+        if (instance == null) {
+            instance = new HttpHeadersParser();
+        }
+        return instance;
+    }
 
     @Override
     public HttpHeaders parse(String headersText) {
