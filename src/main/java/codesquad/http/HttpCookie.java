@@ -1,9 +1,8 @@
 package codesquad.http;
 
-public record HttpCookie(String name, String value, String path) {
+public record HttpCookie(String name, String value) {
 
     public String toCookieString() {
-        return name + "=" + value + "; Path=" + path;
+        return String.join("=", name(), value());
     }
-
 }
