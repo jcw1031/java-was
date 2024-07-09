@@ -1,6 +1,7 @@
 package codesquad.handler;
 
 import codesquad.handler.dto.LoginRequest;
+import codesquad.http.HttpCookies;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.session.SessionManager;
@@ -42,7 +43,10 @@ public final class UserLoginHandler extends RequestHandler {
 
         String sessionId = sessionManager.createSession(user.get().getUserId());
         HttpResponse httpResponse = responseGenerator.sendRedirect(httpRequest, "/main");
-        httpResponse.addCookie("sid", sessionId, "/");
+        HttpCookies cookie = new HttpCookies();
+        cookie.addCookie("sid", sessionId);
+        cookie.addCookie("Path", "/");
+        httpResponse.addCookie(cookie);
         return httpResponse;
     }
 }

@@ -8,7 +8,7 @@ public class HttpCookies {
 
     private final List<HttpCookie> cookies = new ArrayList<>();
 
-    public void setCookie(String name, String value) {
+    public void addCookie(String name, String value) {
         HttpCookie cookie = new HttpCookie(name, value);
         cookies.add(cookie);
     }
