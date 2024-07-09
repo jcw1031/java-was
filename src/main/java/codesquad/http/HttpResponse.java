@@ -3,6 +3,7 @@ package codesquad.http;
 public class HttpResponse {
 
     public static final String CRLF = "\r\n";
+
     private final StatusCode statusCode;
     private final String httpVersion;
     private final HttpHeaders headers;
@@ -28,4 +29,12 @@ public class HttpResponse {
         return responseBytes;
     }
 
+    public HttpHeaders headers() {
+        return headers;
+    }
+
+    public void addCookie(String name, String value, String path) {
+        String cookie = new HttpCookie(name, value, path).toCookieString();
+        headers.addValue(HttpHeaders.SET_COOKIE, cookie);
+    }
 }
