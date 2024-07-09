@@ -1,6 +1,5 @@
 package codesquad.http.parser;
 
-import codesquad.format.Parser;
 import codesquad.http.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

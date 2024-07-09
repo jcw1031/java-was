@@ -1,6 +1,5 @@
 package codesquad.http.parser;
 
-import codesquad.format.Parser;
 import codesquad.http.HttpHeaders;
 
 import java.util.Arrays;

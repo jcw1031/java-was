@@ -1,6 +1,5 @@
 package codesquad.http.parser;
 
-import codesquad.format.Parser;
 import codesquad.http.HttpHeaders;
 import codesquad.http.HttpRequest;
 import codesquad.http.QueryParameters;
