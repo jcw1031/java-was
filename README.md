@@ -40,3 +40,4 @@
 - [x] 로그인 메뉴를 클릭하면 `/login`로 이동
 - [x] 로그인이 성공하면 `/main`으로 redirection
 - [x] 로그인이 실패하면 `/login/failed.html`로 이동
+- [ ] 로그아웃 기능
