@@ -1,10 +1,8 @@
 package codesquad.handler;
 
 import codesquad.handler.dto.RegistrationRequest;
-import codesquad.http.HttpHeaders;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
-import codesquad.http.MediaType;
 import codesquad.model.User;
 import codesquad.model.UserDataBase;
 
@@ -27,17 +25,7 @@ public final class UserRegistrationHandler extends RequestHandler {
 
     @Override
     public HttpResponse handle(HttpRequest httpRequest) {
-        if (!httpRequest.method().equals("POST")) {
-            // TODO 405 Method Not Allowed 적용
-            throw new IllegalArgumentException("[ERROR] 회원가입 요청은 POST 메서드여야 합니다.");
-        }
-
-        String contentType = httpRequest.firstHeaderValue(HttpHeaders.CONTENT_TYPE)
-                .orElse("");
-        if (!contentType.equals(MediaType.APPLICATION_FORM_URLENCODED.getValue())) {
-            // TODO 400 Bad Request 적용
-            throw new IllegalArgumentException("[ERROR] request body 타입이 올바르지 않습니다.");
-        }
+        RequestValidator.validatePostRequest(httpRequest);
 
         String body = httpRequest.body()
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] request body가 없습니다."));
