@@ -37,17 +37,14 @@ public final class ObjectMapper {
             RecordComponent[] recordComponents = recordClass.getRecordComponents();
             List<Object> arguments = new ArrayList<>();
             for (RecordComponent recordComponent : recordComponents) {
-                String componentName = recordComponent.getName();
-                Class<?> componentType = recordComponent.getType();
-
-                String value = parameters.getFirstValue(componentName)
-                        .orElseThrow(() -> new IllegalArgumentException(String.format("[ERROR] %s 필드의 값이 없습니다.", componentName)));
-                Object argument = convert(value, componentType);
+                Object argument = findArgument(recordComponent, parameters);
                 arguments.add(argument);
             }
 
             Constructor<T> constructor = recordClass.getDeclaredConstructor(
-                    Arrays.stream(recordComponents).map(RecordComponent::getType).toArray(Class[]::new)
+                    Arrays.stream(recordComponents)
+                            .map(RecordComponent::getType)
+                            .toArray(Class[]::new)
             );
             return constructor.newInstance(arguments.toArray());
         } catch (ReflectiveOperationException e) {
@@ -55,6 +52,15 @@ public final class ObjectMapper {
         }
 
         throw new IllegalArgumentException("[ERROR] Query String을 읽는 중 오류가 발생했습니다.");
+    }
+
+    private Object findArgument(RecordComponent recordComponent, QueryParameters parameters) {
+        String componentName = recordComponent.getName();
+        Class<?> componentType = recordComponent.getType();
+
+        String value = parameters.getFirstValue(componentName)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("[ERROR] %s 필드의 값이 없습니다.", componentName)));
+        return convert(value, componentType);
     }
 
     private Object convert(String value, Class<?> type) {
