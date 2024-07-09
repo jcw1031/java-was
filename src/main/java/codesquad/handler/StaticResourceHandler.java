@@ -23,7 +23,7 @@ public final class StaticResourceHandler extends RequestHandler {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest httpRequest) {
+    protected HttpResponse handleGet(HttpRequest httpRequest) {
         String uri = httpRequest.uri();
 
         Optional<Resource> readResource = ResourcesReader.readResource(uri);
@@ -43,5 +43,4 @@ public final class StaticResourceHandler extends RequestHandler {
         }
         return responseGenerator.sendNotFound(httpRequest);
     }
-
 }

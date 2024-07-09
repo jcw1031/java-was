@@ -28,8 +28,8 @@ public final class UserLoginHandler extends RequestHandler {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest httpRequest) {
-        RequestValidator.validatePostRequest(httpRequest);
+    protected HttpResponse handlePost(HttpRequest httpRequest) {
+        RequestValidator.validateContentType(httpRequest);
 
         String body = httpRequest.body()
                 .orElseThrow(() -> new IllegalStateException("[ERROR] request body가 없습니다."));
@@ -45,5 +45,4 @@ public final class UserLoginHandler extends RequestHandler {
         httpResponse.addCookie("sid", sessionId, "/");
         return httpResponse;
     }
-
 }

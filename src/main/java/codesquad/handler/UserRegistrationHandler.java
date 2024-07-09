@@ -24,8 +24,8 @@ public final class UserRegistrationHandler extends RequestHandler {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest httpRequest) {
-        RequestValidator.validatePostRequest(httpRequest);
+    protected HttpResponse handlePost(HttpRequest httpRequest) {
+        RequestValidator.validateContentType(httpRequest);
 
         String body = httpRequest.body()
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] request body가 없습니다."));
@@ -38,5 +38,4 @@ public final class UserRegistrationHandler extends RequestHandler {
         }
         return responseGenerator.sendBadRequest(httpRequest);
     }
-
 }

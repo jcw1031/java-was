@@ -6,12 +6,7 @@ import codesquad.http.MediaType;
 
 public class RequestValidator {
 
-    public static void validatePostRequest(HttpRequest httpRequest) {
-        if (!httpRequest.method().equals("POST")) {
-            // TODO 405 Method Not Allowed 적용
-            throw new IllegalArgumentException("[ERROR] 요청은 POST 메서드여야 합니다.");
-        }
-
+    public static void validateContentType(HttpRequest httpRequest) {
         String contentType = httpRequest.firstHeaderValue(HttpHeaders.CONTENT_TYPE)
                 .orElse("");
         if (!contentType.equals(MediaType.APPLICATION_FORM_URLENCODED.getValue())) {
