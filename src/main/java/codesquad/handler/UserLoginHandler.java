@@ -1,26 +1,30 @@
 package codesquad.handler;
 
-import codesquad.handler.dto.RegistrationRequest;
+import codesquad.handler.dto.LoginRequest;
 import codesquad.http.HttpHeaders;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.MediaType;
+import codesquad.http.session.SessionManager;
 import codesquad.model.User;
 import codesquad.model.UserDataBase;
 
-public final class UserRegistrationHandler extends RequestHandler {
+import java.util.Optional;
 
-    private static UserRegistrationHandler instance = new UserRegistrationHandler();
+public final class UserLoginHandler extends RequestHandler {
+
+    private static UserLoginHandler instance = new UserLoginHandler();
 
     private final ObjectMapper objectMapper = ObjectMapper.getInstance();
     private final UserDataBase userDataBase = UserDataBase.getInstance();
+    private final SessionManager sessionManager = SessionManager.getInstance();
 
-    private UserRegistrationHandler() {
+    private UserLoginHandler() {
     }
 
-    public static UserRegistrationHandler getInstance() {
+    public static UserLoginHandler getInstance() {
         if (instance == null) {
-            instance = new UserRegistrationHandler();
+            instance = new UserLoginHandler();
         }
         return instance;
     }
@@ -40,15 +44,16 @@ public final class UserRegistrationHandler extends RequestHandler {
         }
 
         String body = httpRequest.body()
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] request body가 없습니다."));
-        RegistrationRequest registrationRequest = objectMapper.readQueryString(body, RegistrationRequest.class);
+                .orElseThrow(() -> new IllegalStateException("[ERROR] request body가 없습니다."));
+        LoginRequest loginRequest = objectMapper.readQueryString(body, LoginRequest.class);
 
-        User user = new User(registrationRequest.userId(), registrationRequest.nickname(), registrationRequest.password());
-        boolean success = userDataBase.addUser(user);
-        if (success) {
-            return responseGenerator.sendRedirect(httpRequest, "/");
+        Optional<User> user = userDataBase.findUser(loginRequest.userId());
+        if (user.isEmpty() || !user.get().matchPassword(loginRequest.password())) {
+            return responseGenerator.sendRedirect(httpRequest, "/login/failed.html");
         }
-        return responseGenerator.sendBadRequest(httpRequest);
+
+        // TODO 세션 생성 및 쿠키 설정
+        return responseGenerator.sendRedirect(httpRequest, "/");
     }
 
 }
