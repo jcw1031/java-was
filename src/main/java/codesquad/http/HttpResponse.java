@@ -33,8 +33,11 @@ public class HttpResponse {
         return headers;
     }
 
-    public void addCookie(String name, String value, String path) {
-        String cookie = new HttpCookie(name, value, path).toCookieString();
-        headers.addValue(HttpHeaders.SET_COOKIE, cookie);
+    public StatusCode statusCode() {
+        return statusCode;
+    }
+
+    public void addCookie(HttpCookies cookie) {
+        headers.addValue(HttpHeaders.SET_COOKIE, cookie.toCookiesString());
     }
 }
