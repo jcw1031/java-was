@@ -20,9 +20,15 @@ public class SessionManager {
     }
 
     public String createSession(String userId) {
-        String sessionId = String.valueOf(System.currentTimeMillis());
-        sessions.put(sessionId, userId);
-        return sessionId;
+        return sessions.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(userId))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseGet(() -> {
+                    String sessionId = String.valueOf(System.currentTimeMillis());
+                    sessions.put(sessionId, userId);
+                    return sessionId;
+                });
     }
 
     public String findUserId(String sessionId) {
