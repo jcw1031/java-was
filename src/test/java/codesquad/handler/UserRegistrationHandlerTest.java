@@ -2,13 +2,16 @@ package codesquad.handler;
 
 import codesquad.http.HttpHeaders;
 import codesquad.http.HttpRequest;
+import codesquad.http.HttpResponse;
 import codesquad.http.MediaType;
+import codesquad.http.StatusCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UserRegistrationHandlerTest {
@@ -25,11 +28,11 @@ class UserRegistrationHandlerTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"GET", "PUT", "DELETE"})
-        void POST_메서드_요청이_아니면_예외가_발생한다(String httpMethod) {
+        void POST_메서드_요청이_아니면_405_응답을_반환한다(String httpMethod) {
             HttpRequest httpRequest = new HttpRequest(null, httpMethod, null, null, null, null);
-            assertThatThrownBy(() -> userRegistrationHandler.handle(httpRequest))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("[ERROR] 요청은 POST 메서드여야 합니다.");
+            HttpResponse response = userRegistrationHandler.handle(httpRequest);
+            StatusCode statusCode = response.statusCode();
+            assertThat(statusCode).isEqualTo(StatusCode.METHOD_NOT_ALLOWED);
         }
 
         @Test
