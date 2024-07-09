@@ -1,6 +1,7 @@
 package codesquad.http.session;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
@@ -25,7 +26,7 @@ public class SessionManager {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElseGet(() -> {
-                    String sessionId = String.valueOf(System.currentTimeMillis());
+                    String sessionId = UUID.randomUUID().toString();
                     sessions.put(sessionId, userId);
                     return sessionId;
                 });
