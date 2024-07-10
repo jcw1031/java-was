@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public final class UserLoginHandler extends RequestHandler {
 
-    private static UserLoginHandler instance = new UserLoginHandler();
+    private static UserLoginHandler instance;
 
     private final ObjectMapper objectMapper = ObjectMapper.getInstance();
     private final UserDataBase userDataBase = UserDataBase.getInstance();

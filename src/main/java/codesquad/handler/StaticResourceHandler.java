@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public final class StaticResourceHandler extends RequestHandler {
 
-    private static StaticResourceHandler instance = new StaticResourceHandler();
+    private static StaticResourceHandler instance;
 
     private StaticResourceHandler() {
     }
