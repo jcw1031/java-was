@@ -12,6 +12,8 @@ import codesquad.http.ResponseWriter;
 import codesquad.http.StatusCode;
 import codesquad.http.parser.HttpRequestParser;
 import codesquad.http.parser.ParsersFactory;
+import codesquad.http.session.SessionContextFactory;
+import codesquad.http.session.SessionContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,7 @@ public class HttpRequestProcessor implements Runnable {
     private final HandlersMapper handlersMapper;
     private final ErrorResponseHandler errorResponseHandler = ErrorResponseHandler.getInstance();
     private final ResponseWriter responseWriter;
+    private final SessionContextFactory sessionContextFactory = SessionContextFactory.getInstance();
 
     public HttpRequestProcessor(Socket socket, HandlersMapper handlersMapper) throws IOException {
         this.socket = socket;
@@ -63,10 +66,10 @@ public class HttpRequestProcessor implements Runnable {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         } catch (RuntimeException e) {
-            log.info("캐치했다!!");
             httpResponse = errorResponseHandler.handle(e, httpRequest);
         } finally {
             responseWriter.write(httpResponse);
+            SessionContextHolder.clear();
             try {
                 socket.close();
             } catch (IOException e) {
