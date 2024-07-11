@@ -1,8 +1,10 @@
 package codesquad.handler;
 
+import codesquad.error.HttpStatusException;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.MediaType;
+import codesquad.http.StatusCode;
 import codesquad.http.session.SessionContextHolder;
 import codesquad.http.session.SessionManager;
 import codesquad.model.User;
@@ -35,7 +37,7 @@ public class DynamicResourceHandler extends RequestHandler {
         String uri = httpRequest.uri();
         Optional<Resource> resolvedResource = directoryIndexResolver.resolve(uri);
         if (resolvedResource.isEmpty()) {
-            return responseGenerator.sendNotFound(httpRequest);
+            throw new HttpStatusException(StatusCode.NOT_FOUND, "[ERROR] 파일을 찾을 수 없습니다.");
         }
 
         Resource resource = resolvedResource.get();
