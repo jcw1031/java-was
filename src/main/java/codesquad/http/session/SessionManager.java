@@ -1,6 +1,7 @@
 package codesquad.http.session;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +35,7 @@ public class SessionManager {
     }
 
     public Optional<String> findUserId(String sessionId) {
-        if (sessionId == null || sessions.containsKey(sessionId)) {
+        if (Objects.nonNull(sessionId) && sessions.containsKey(sessionId)) {
             return Optional.of(sessions.get(sessionId));
         }
         return Optional.empty();
