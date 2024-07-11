@@ -10,6 +10,7 @@ import java.util.Optional;
 public final class ResourcesReader {
 
     private static final String RESOURCES_PATH = "/static";
+
     private static final Logger log = LoggerFactory.getLogger(ResourcesReader.class);
 
     private ResourcesReader() {
