@@ -20,7 +20,7 @@ public final class ResourcesReader {
         path = checkPath(path);
         String fullPath = RESOURCES_PATH + path;
         if (!path.contains(".")) {
-            return Optional.of(Resource.directory(path));
+            return Optional.of(Resource.directory(extractFileName(path)));
         }
 
         try (InputStream inputStream = ResourcesReader.class.getResourceAsStream(fullPath)) {
@@ -30,12 +30,16 @@ public final class ResourcesReader {
             }
 
             byte[] content = inputStream.readAllBytes();
-            Resource resource = Resource.file(path, content);
+            Resource resource = Resource.file(extractFileName(path), content);
             return Optional.of(resource);
         } catch (IOException e) {
             log.error("[ERROR] 파일을 읽을 수 없습니다.", e);
             return Optional.empty();
         }
+    }
+
+    private static String extractFileName(String path) {
+        return path.substring(path.lastIndexOf("/") + 1);
     }
 
     private static String checkPath(String path) {
