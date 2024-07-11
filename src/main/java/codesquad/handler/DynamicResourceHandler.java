@@ -10,9 +10,6 @@ import codesquad.model.UserDataBase;
 import codesquad.resource.DirectoryIndexResolver;
 import codesquad.resource.Resource;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Optional;
 
 public class DynamicResourceHandler extends RequestHandler {
@@ -50,32 +47,13 @@ public class DynamicResourceHandler extends RequestHandler {
         String foundUserId = sessionManager.findUserId(sessionId)
                 .orElse("");
         Optional<User> foundUser = userDataBase.findUser(foundUserId);
-
-        String replacedHtml = replaceHtml(resource, foundUser);
-        return responseGenerator.sendOK(replacedHtml.getBytes(), MediaType.TEXT_HTML, httpRequest);
-    }
-
-    private static String replaceHtml(Resource resource, Optional<User> foundUser) {
-        byte[] content = resource.getContent();
-        String htmlText = new String(content);
-        StringBuilder replacedHtml = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new StringReader(htmlText))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("id=\"headerButton\"") && foundUser.isPresent()) {
-                    line = line.replace("로그인", "로그아웃");
-                    line = line.replace("/login", "/user/logout");
-                }
-                if (line.contains("id=\"headerLabel\"") && foundUser.isPresent()) {
-                    User user = foundUser.get();
-                    line = line.replace("회원 가입", user.getNickname());
-                    line = line.replace("href=\"/registration\"", "");
-                }
-                replacedHtml.append(line);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        String content = new String(resource.getContent());
+        if (foundUser.isEmpty()) {
+            return responseGenerator.sendOK(content.getBytes(), MediaType.TEXT_HTML, httpRequest);
         }
-        return replacedHtml.toString();
+
+        User user = foundUser.get();
+        String replacedHtml = HtmlTransformer.replaceUserHeader(content, user);
+        return responseGenerator.sendOK(replacedHtml.getBytes(), MediaType.TEXT_HTML, httpRequest);
     }
 }
