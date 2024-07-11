@@ -42,7 +42,7 @@ public final class UserLoginHandler extends RequestHandler {
         }
 
         String sessionId = sessionManager.createSession(user.get().getUserId());
-        HttpResponse httpResponse = responseGenerator.sendRedirect(httpRequest, "/main");
+        HttpResponse httpResponse = responseGenerator.sendRedirect(httpRequest, "/");
         HttpCookies cookie = new HttpCookies();
         cookie.addCookie("sid", sessionId);
         cookie.addCookie("Path", "/");
