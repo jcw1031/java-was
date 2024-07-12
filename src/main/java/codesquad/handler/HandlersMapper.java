@@ -23,8 +23,8 @@ public class HandlersMapper {
         log.info("uri 먼가요 = {}", uri);
         return requestHandlers.entrySet()
                 .stream()
-                .filter(entry -> uri.equals(entry.getKey()))
-                .findFirst()
+                .filter(entry -> entry.getKey().equals(uri))
+                .findAny()
                 .map(Map.Entry::getValue)
                 .orElse(DynamicResourceHandler.getInstance());
     }
