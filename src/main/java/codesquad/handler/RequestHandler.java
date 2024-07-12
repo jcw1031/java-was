@@ -42,7 +42,7 @@ public abstract class RequestHandler {
 
     private HttpResponse handleError(HttpRequest httpRequest, RuntimeException e) {
         if (e instanceof HttpStatusException httpStatusException) {
-            String message = String.format("<h1>%s</h1><p>%s</p>", httpStatusException.statusCode(), e.getMessage());
+            String message = String.format("<h1>%s</h1><p>%s</p>", httpStatusException.getStatusMessage(), e.getMessage());
             return responseGenerator.sendError(httpRequest, httpStatusException.statusCode(), message);
         }
         return responseGenerator.sendInternalServerError(httpRequest);
