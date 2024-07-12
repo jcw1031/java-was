@@ -42,7 +42,7 @@ public class UserListHandler extends RequestHandler {
             return responseGenerator.sendRedirect(httpRequest, "/login");
         }
 
-        Resource resource = ResourcesReader.readResource("/static/user/index.html")
+        Resource resource = ResourcesReader.readResource("/user/index.html")
                 .orElseThrow(() -> new HttpStatusException(StatusCode.NOT_FOUND));
         String content = new String(resource.getContent());
         List<User> users = userDataBase.findAll();
