@@ -14,9 +14,8 @@ import codesquad.resource.Resource;
 import codesquad.resource.transform.HtmlTransformer;
 
 import java.util.List;
-import java.util.Objects;
 
-public class UserListHandler extends RequestHandler {
+public class UserListHandler extends AuthenticatedHandler {
 
     private static UserListHandler instance;
 
@@ -35,16 +34,12 @@ public class UserListHandler extends RequestHandler {
 
     @Override
     protected HttpResponse handleGet(HttpRequest httpRequest) {
-        SessionContext sessionContext = SessionContextHolder.getContext();
-        if (Objects.isNull(sessionContext.user())) {
-            return responseGenerator.sendRedirect(httpRequest, "/login");
-        }
-
         Resource resource = directoryIndexResolver.resolve("/user")
                 .orElseThrow(() -> new HttpStatusException(StatusCode.NOT_FOUND));
         String content = new String(resource.getContent());
         List<User> users = userDataBase.findAll();
 
+        SessionContext sessionContext = SessionContextHolder.getContext();
         String replacedContent = HtmlTransformer.replaceUserHeader(content, sessionContext.user());
         replacedContent = HtmlTransformer.appendUserList(replacedContent, users);
         return responseGenerator.sendOK(replacedContent.getBytes(), MediaType.TEXT_HTML, httpRequest);

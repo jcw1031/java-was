@@ -24,8 +24,8 @@ class SessionContextHolderTest {
         @Test
         void 문자열_값을_저장한다() {
             String sessionId = "test";
-            SessionContextHolder.setSessionId(sessionId);
-            assertThat(SessionContextHolder.getSessionId()).isEqualTo(sessionId);
+            SessionContextHolder.setContext(sessionId);
+            assertThat(SessionContextHolder.getContext()).isEqualTo(sessionId);
         }
     }
 
@@ -35,8 +35,8 @@ class SessionContextHolderTest {
         @Test
         void 저장된_값을_반환한다() {
             String sessionId = "test";
-            SessionContextHolder.setSessionId(sessionId);
-            assertThat(SessionContextHolder.getSessionId()).isEqualTo(sessionId);
+            SessionContextHolder.setContext(sessionId);
+            assertThat(SessionContextHolder.getContext()).isEqualTo(sessionId);
         }
     }
 
@@ -46,9 +46,9 @@ class SessionContextHolderTest {
         @Test
         void 저장된_값을_제거한다() {
             String sessionId = "test";
-            SessionContextHolder.setSessionId(sessionId);
+            SessionContextHolder.setContext(sessionId);
             SessionContextHolder.clear();
-            assertThat(SessionContextHolder.getSessionId()).isNull();
+            assertThat(SessionContextHolder.getContext()).isNull();
         }
     }
 
@@ -59,16 +59,16 @@ class SessionContextHolderTest {
         void 각_스레드별로_값을_저장한다() throws ExecutionException, InterruptedException {
             String sessionId = "thread1";
             String anotherThreadSessionId = "thread2";
-            SessionContextHolder.setSessionId(sessionId);
+            SessionContextHolder.setContext(sessionId);
 
             ExecutorService executorService = Executors.newSingleThreadExecutor();
             Future<?> future = executorService.submit(() -> {
-                SessionContextHolder.setSessionId(anotherThreadSessionId);
-                assertThat(SessionContextHolder.getSessionId()).isEqualTo(anotherThreadSessionId);
-                return SessionContextHolder.getSessionId();
+                SessionContextHolder.setContext(anotherThreadSessionId);
+                assertThat(SessionContextHolder.getContext()).isEqualTo(anotherThreadSessionId);
+                return SessionContextHolder.getContext();
             });
-            assertThat(SessionContextHolder.getSessionId()).isEqualTo(sessionId);
-            assertThat(SessionContextHolder.getSessionId()).isNotEqualTo(future.get());
+            assertThat(SessionContextHolder.getContext()).isEqualTo(sessionId);
+            assertThat(SessionContextHolder.getContext()).isNotEqualTo(future.get());
             assertThat(future.get()).isEqualTo(anotherThreadSessionId);
         }
     }

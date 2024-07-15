@@ -34,10 +34,9 @@ public final class UserRegistrationHandler extends RequestHandler {
         RegistrationRequest registrationRequest = objectMapper.readQueryString(body, RegistrationRequest.class);
 
         User user = new User(registrationRequest.userId(), registrationRequest.nickname(), registrationRequest.password());
-        boolean success = userDataBase.addUser(user);
-        if (success) {
-            return responseGenerator.sendRedirect(httpRequest, "/");
+        if (!userDataBase.addUser(user)) {
+            throw new HttpStatusException(StatusCode.BAD_REQUEST, "[ERROR] 이미 사용중인 아이디입니다.");
         }
-        throw new HttpStatusException(StatusCode.BAD_REQUEST, "[ERROR] 이미 사용중인 아이디입니다.");
+        return responseGenerator.sendRedirect(httpRequest, "/");
     }
 }
