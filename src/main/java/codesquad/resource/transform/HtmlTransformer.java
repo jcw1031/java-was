@@ -1,4 +1,4 @@
-package codesquad.handler;
+package codesquad.resource.transform;
 
 import codesquad.model.User;
 
@@ -14,11 +14,14 @@ public class HtmlTransformer {
             StringBuilder replacedHtml = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.contains("id=\"headerButton\"")) {
+                if (line.contains("id=\"writeButton\"") && user == null) {
+                    line = "";
+                }
+                if (line.contains("id=\"headerButton\"") && user != null) {
                     line = line.replace("로그인", "로그아웃");
                     line = line.replace("/login", "/user/logout");
                 }
-                if (line.contains("id=\"headerLabel\"")) {
+                if (line.contains("id=\"headerLabel\"") && user != null) {
                     line = line.replace("회원 가입", user.getNickname());
                     line = line.replace("href=\"/registration\"", "");
                 }
