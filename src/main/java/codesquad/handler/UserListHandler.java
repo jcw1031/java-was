@@ -5,22 +5,22 @@ import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.MediaType;
 import codesquad.http.StatusCode;
+import codesquad.http.session.SessionContext;
 import codesquad.http.session.SessionContextHolder;
-import codesquad.http.session.SessionManager;
 import codesquad.model.User;
 import codesquad.model.UserDataBase;
 import codesquad.resource.DirectoryIndexResolver;
 import codesquad.resource.Resource;
+import codesquad.resource.transform.HtmlTransformer;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 public class UserListHandler extends RequestHandler {
 
     private static UserListHandler instance;
 
     private final UserDataBase userDataBase = UserDataBase.getInstance();
-    private final SessionManager sessionManager = SessionManager.getInstance();
     private final DirectoryIndexResolver directoryIndexResolver = DirectoryIndexResolver.getInstance();
 
     private UserListHandler() {
@@ -35,11 +35,8 @@ public class UserListHandler extends RequestHandler {
 
     @Override
     protected HttpResponse handleGet(HttpRequest httpRequest) {
-        String sessionId = SessionContextHolder.getSessionId();
-        String foundUserId = sessionManager.findUserId(sessionId)
-                .orElse("");
-        Optional<User> foundUser = userDataBase.findUser(foundUserId);
-        if (foundUser.isEmpty()) {
+        SessionContext sessionContext = SessionContextHolder.getContext();
+        if (Objects.isNull(sessionContext.user())) {
             return responseGenerator.sendRedirect(httpRequest, "/login");
         }
 
@@ -48,8 +45,8 @@ public class UserListHandler extends RequestHandler {
         String content = new String(resource.getContent());
         List<User> users = userDataBase.findAll();
 
-        String replacedContent = HtmlTransformer.appendUserList(content, users);
-        replacedContent = HtmlTransformer.replaceUserHeader(replacedContent, foundUser.get());
+        String replacedContent = HtmlTransformer.replaceUserHeader(content, sessionContext.user());
+        replacedContent = HtmlTransformer.appendUserList(replacedContent, users);
         return responseGenerator.sendOK(replacedContent.getBytes(), MediaType.TEXT_HTML, httpRequest);
     }
 }
