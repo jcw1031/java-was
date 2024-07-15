@@ -14,6 +14,10 @@ public class HtmlTransformer {
             StringBuilder replacedHtml = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.contains("id=\"writeButton\"")) {
+                    line = line.replace("회원 가입", user.getNickname());
+                    line = line.replace("href=\"/registration\"", "");
+                }
                 if (line.contains("id=\"headerButton\"")) {
                     line = line.replace("로그인", "로그아웃");
                     line = line.replace("/login", "/user/logout");

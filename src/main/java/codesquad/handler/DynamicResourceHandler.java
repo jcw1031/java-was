@@ -35,12 +35,8 @@ public class DynamicResourceHandler extends RequestHandler {
     @Override
     protected HttpResponse handleGet(HttpRequest httpRequest) {
         String uri = httpRequest.uri();
-        Optional<Resource> resolvedResource = directoryIndexResolver.resolve(uri);
-        if (resolvedResource.isEmpty()) {
-            throw new HttpStatusException(StatusCode.NOT_FOUND, "[ERROR] 파일을 찾을 수 없습니다.");
-        }
-
-        Resource resource = resolvedResource.get();
+        Resource resource = directoryIndexResolver.resolve(uri)
+                .orElseThrow(() -> new HttpStatusException(StatusCode.NOT_FOUND, "[ERROR] 파일을 찾을 수 없습니다."));
         if (!resource.getExtension().equals("html")) {
             return responseGenerator.sendOK(resource.getContent(), MediaType.find(resource.getExtension()), httpRequest);
         }
