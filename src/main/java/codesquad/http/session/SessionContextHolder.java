@@ -9,12 +9,12 @@ public class SessionContextHolder {
     private SessionContextHolder() {
     }
 
-    public static void setSessionId(String sessionId, User user) {
+    public static void setContext(String sessionId, User user) {
         SessionContext sessionContext = new SessionContext(sessionId, user);
         context.set(sessionContext);
     }
 
-    public static SessionContext getSessionContext() {
+    public static SessionContext getContext() {
         return context.get();
     }
 

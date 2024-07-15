@@ -25,7 +25,7 @@ public class SessionContextFactory {
         String foundUserId = sessionManager.findUserId(sessionId)
                 .orElse("");
         userDataBase.findUser(foundUserId)
-                .ifPresentOrElse(user -> SessionContextHolder.setSessionId(sessionId, user),
-                        () -> SessionContextHolder.setSessionId(sessionId, null));
+                .ifPresentOrElse(user -> SessionContextHolder.setContext(sessionId, user),
+                        () -> SessionContextHolder.setContext(sessionId, null));
     }
 }
