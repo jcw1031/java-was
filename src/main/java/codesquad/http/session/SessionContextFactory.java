@@ -1,14 +1,14 @@
 package codesquad.http.session;
 
+import codesquad.database.UserRepository;
 import codesquad.http.HttpRequest;
-import codesquad.model.UserDataBase;
 
 public class SessionContextFactory {
 
     private static SessionContextFactory instance;
 
     private final SessionManager sessionManager = SessionManager.getInstance();
-    private final UserDataBase userDataBase = UserDataBase.getInstance();
+    private final UserRepository userRepository = UserRepository.getInstance();
 
     private SessionContextFactory() {
     }
@@ -24,7 +24,7 @@ public class SessionContextFactory {
         String sessionId = httpRequest.getCookie("sid");
         String foundUserId = sessionManager.findUserId(sessionId)
                 .orElse("");
-        userDataBase.findUser(foundUserId)
+        userRepository.findByUserId(foundUserId)
                 .ifPresentOrElse(user -> SessionContextHolder.setContext(sessionId, user),
                         () -> SessionContextHolder.setContext(sessionId, null));
     }
