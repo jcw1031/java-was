@@ -5,8 +5,11 @@ import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.MediaType;
 import codesquad.http.StatusCode;
+import codesquad.http.session.SessionContext;
+import codesquad.http.session.SessionContextHolder;
 import codesquad.resource.DirectoryIndexResolver;
 import codesquad.resource.Resource;
+import codesquad.resource.transform.HtmlTransformer;
 
 public class ArticleHandler extends AuthenticatedHandler {
 
@@ -29,6 +32,9 @@ public class ArticleHandler extends AuthenticatedHandler {
         String uri = httpRequest.uri();
         Resource resource = directoryIndexResolver.resolve(uri)
                 .orElseThrow(() -> new HttpStatusException(StatusCode.NOT_FOUND, "[ERROR] 파일을 찾을 수 없습니다."));
-        return responseGenerator.sendOK(resource.getContent(), MediaType.find(resource.getExtension()), httpRequest);
+        String content = new String(resource.getContent());
+        SessionContext context = SessionContextHolder.getContext();
+        String replacedHtml = HtmlTransformer.replaceUserHeader(content, context.user());
+        return responseGenerator.sendOK(replacedHtml.getBytes(), MediaType.find(resource.getExtension()), httpRequest);
     }
 }
