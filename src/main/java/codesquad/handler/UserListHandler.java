@@ -34,7 +34,7 @@ public class UserListHandler extends AuthenticatedHandler {
 
     @Override
     protected HttpResponse handleGet(HttpRequest httpRequest) {
-        Resource resource = directoryIndexResolver.resolve("/user")
+        Resource resource = directoryIndexResolver.resolve("/user/index.html")
                 .orElseThrow(() -> new HttpStatusException(StatusCode.NOT_FOUND));
         String content = new String(resource.getContent());
         List<User> users = userRepository.findAll();
