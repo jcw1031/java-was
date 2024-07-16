@@ -25,7 +25,8 @@ public class HtmlTransformer {
                     line = line.replace("회원 가입", user.getNickname());
                     line = line.replace("href=\"/registration\"", "");
                 }
-                replacedHtml.append(line);
+                replacedHtml.append(line)
+                        .append("\n");
             }
             return replacedHtml.toString();
         } catch (IOException e) {
