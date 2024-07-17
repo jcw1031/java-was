@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -67,38 +66,12 @@ public final class JdbcTemplate {
             throw new IllegalArgumentException("[ERROR] SQL 문이 비어있습니다.");
         }
 
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement(sql);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 0; i < arguments.length; i++) {
                 preparedStatement.setObject(i + 1, arguments[i]);
             }
             return function.apply(preparedStatement);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            closeStatement(preparedStatement);
-            releaseConnection(connection);
-        }
-    }
-
-    private void releaseConnection(Connection connection) {
-        try {
-            if (Objects.nonNull(connection)) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closeStatement(Statement statement) {
-        try {
-            if (Objects.nonNull(statement)) {
-                statement.close();
-            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
