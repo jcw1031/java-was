@@ -1,6 +1,6 @@
 package codesquad;
 
-import codesquad.database.DataBaseInitializer;
+import codesquad.database.DatabaseInitializer;
 import codesquad.handler.HandlersMapper;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class Main {
         ExecutorService executorService = Executors.newFixedThreadPool(MAXIMUM_THREAD_POOL_SIZE);
         Server server = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082");
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
-            DataBaseInitializer.initialize();
+            DatabaseInitializer.initialize();
             server.start();
 
             log.debug("Listening for connection on port 8080 ....");

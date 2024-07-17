@@ -5,10 +5,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public final class DataBaseInitializer {
+public final class DatabaseInitializer {
 
     public static void initialize() {
-        try (Connection connection = DriverManager.getConnection(H2Constants.JDBC_URL, H2Constants.USERNAME, H2Constants.PASSWORD);
+        H2Config h2Config = H2Config.standard();
+        try (Connection connection = DriverManager.getConnection(h2Config.jdbcUrl(), h2Config.username(), h2Config.password());
              Statement statement = connection.createStatement()) {
             statement.executeUpdate(H2Constants.CREATE_USER_TABLE);
             statement.executeUpdate(H2Constants.CREATE_ARTICLE_TABLE);
