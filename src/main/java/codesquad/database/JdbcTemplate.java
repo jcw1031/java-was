@@ -17,13 +17,13 @@ public final class JdbcTemplate {
 
     private final DataSource dataSource;
 
-    private JdbcTemplate() {
-        dataSource = JdbcConnectionPool.create(H2Constants.JDBC_URL, H2Constants.USERNAME, H2Constants.PASSWORD);
+    private JdbcTemplate(H2Config h2Config) {
+        dataSource = JdbcConnectionPool.create(h2Config.jdbcUrl(), h2Config.username(), h2Config.password());
     }
 
-    public static JdbcTemplate getInstance() {
+    public static JdbcTemplate getInstance(H2Config h2Config) {
         if (instance == null) {
-            instance = new JdbcTemplate();
+            instance = new JdbcTemplate(h2Config);
         }
         return instance;
     }

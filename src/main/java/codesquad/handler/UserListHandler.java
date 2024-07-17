@@ -1,5 +1,6 @@
 package codesquad.handler;
 
+import codesquad.database.H2Config;
 import codesquad.database.UserRepository;
 import codesquad.error.HttpStatusException;
 import codesquad.http.HttpRequest;
@@ -19,7 +20,7 @@ public class UserListHandler extends AuthenticatedHandler {
 
     private static UserListHandler instance;
 
-    private final UserRepository userRepository = UserRepository.getInstance();
+    private final UserRepository userRepository = UserRepository.getInstance(H2Config.standard());
     private final DirectoryIndexResolver directoryIndexResolver = DirectoryIndexResolver.getInstance();
 
     private UserListHandler() {

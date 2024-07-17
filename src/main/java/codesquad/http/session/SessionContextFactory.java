@@ -1,5 +1,6 @@
 package codesquad.http.session;
 
+import codesquad.database.H2Config;
 import codesquad.database.UserRepository;
 import codesquad.http.HttpRequest;
 
@@ -8,7 +9,7 @@ public class SessionContextFactory {
     private static SessionContextFactory instance;
 
     private final SessionManager sessionManager = SessionManager.getInstance();
-    private final UserRepository userRepository = UserRepository.getInstance();
+    private final UserRepository userRepository = UserRepository.getInstance(H2Config.standard());
 
     private SessionContextFactory() {
     }

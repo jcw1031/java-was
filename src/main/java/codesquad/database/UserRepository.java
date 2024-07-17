@@ -11,13 +11,13 @@ public final class UserRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private UserRepository() {
-        jdbcTemplate = JdbcTemplate.getInstance();
+    private UserRepository(H2Config h2Config) {
+        jdbcTemplate = JdbcTemplate.getInstance(h2Config);
     }
 
-    public static UserRepository getInstance() {
+    public static UserRepository getInstance(H2Config h2Config) {
         if (instance == null) {
-            instance = new UserRepository();
+            instance = new UserRepository(h2Config);
         }
         return instance;
     }

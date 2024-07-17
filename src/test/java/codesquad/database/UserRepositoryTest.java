@@ -2,6 +2,7 @@ package codesquad.database;
 
 import codesquad.model.User;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,16 @@ class UserRepositoryTest {
 
     UserRepository userRepository;
 
+    @BeforeAll
+    static void beforeAll() {
+        JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance(H2Config.test());
+        jdbcTemplate.update(H2Constants.CREATE_USER_TABLE);
+        jdbcTemplate.update(H2Constants.CREATE_ARTICLE_TABLE);
+    }
+
     @BeforeEach
     void setUp() {
-        userRepository = UserRepository.getInstance();
+        userRepository = UserRepository.getInstance(H2Config.test());
     }
 
     @Nested
@@ -28,7 +36,7 @@ class UserRepositoryTest {
         }
 
         @Test
-        void User_인스턴스를_DB에_저장한다() throws InterruptedException {
+        void User_인스턴스를_DB에_저장한다() {
             User user = new User("test", "테스트", "test");
             userRepository.save(user);
 
