@@ -1,6 +1,9 @@
 package codesquad.resource.transform;
 
+import codesquad.model.Article;
 import codesquad.model.User;
+import codesquad.resource.Resource;
+import codesquad.resource.ResourcesReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,5 +59,19 @@ public class HtmlTransformer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String appendArticles(String originHtml, List<Article> articles, List<User> users) {
+        Resource resource = ResourcesReader.readResource("/article/component.html")
+                .orElseThrow(() -> new IllegalStateException("[ERROR] 게시글 컴포넌트를 읽어오는데 실패했습니다."));
+        String content = new String(resource.getContent());
+        StringBuilder articlesComponent = new StringBuilder();
+        for (int i = 0; i < articles.size(); i++) {
+            Article article = articles.get(i);
+            User user = users.get(i);
+            String formatted = String.format(content, user.getNickname(), article.getId(), article.getContent());
+            articlesComponent.append(formatted);
+        }
+        return String.format(originHtml, articlesComponent);
     }
 }

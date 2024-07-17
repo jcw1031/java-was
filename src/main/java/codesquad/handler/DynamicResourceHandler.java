@@ -1,5 +1,7 @@
 package codesquad.handler;
 
+import codesquad.database.ArticleRepository;
+import codesquad.database.UserRepository;
 import codesquad.error.HttpStatusException;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
@@ -7,15 +9,22 @@ import codesquad.http.MediaType;
 import codesquad.http.StatusCode;
 import codesquad.http.session.SessionContext;
 import codesquad.http.session.SessionContextHolder;
+import codesquad.model.Article;
+import codesquad.model.User;
 import codesquad.resource.DirectoryIndexResolver;
 import codesquad.resource.Resource;
 import codesquad.resource.transform.HtmlTransformer;
+
+import java.util.List;
+import java.util.Objects;
 
 public class DynamicResourceHandler extends RequestHandler {
 
     private static DynamicResourceHandler instance;
 
     private final DirectoryIndexResolver directoryIndexResolver = DirectoryIndexResolver.getInstance();
+    private final ArticleRepository articleRepository = ArticleRepository.getInstance();
+    private final UserRepository userRepository = UserRepository.getInstance();
 
     private DynamicResourceHandler() {
     }
@@ -39,6 +48,16 @@ public class DynamicResourceHandler extends RequestHandler {
         String content = new String(resource.getContent());
         SessionContext sessionContext = SessionContextHolder.getContext();
         String replacedHtml = HtmlTransformer.replaceUserHeader(content, sessionContext.user());
+        // FIXME: refactoring 하기
+        List<Article> articles = articleRepository.findAll();
+        List<User> users = userRepository.findAll();
+        List<User> writers = articles.stream()
+                .map(article -> users.stream()
+                        .filter(user -> Objects.equals(user.getId(), article.getUserId()))
+                        .findAny()
+                        .orElse(null))
+                .toList();
+        replacedHtml = HtmlTransformer.appendArticles(replacedHtml, articles, writers);
         return responseGenerator.sendOK(replacedHtml.getBytes(), MediaType.TEXT_HTML, httpRequest);
     }
 }
