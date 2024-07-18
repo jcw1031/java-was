@@ -11,6 +11,13 @@ public class ImageWriter {
 
     public static String write(Resource resource) {
         String directory = System.getProperty("user.home") + "/images";
+        File dir = new File(directory);
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                throw new RuntimeException("[ERROR] directory 생성 실패: " + directory);
+            }
+        }
+
         String uniqueFileName = UUID.randomUUID() + "." + resource.getExtension();
         File file = new File(directory, uniqueFileName);
 
