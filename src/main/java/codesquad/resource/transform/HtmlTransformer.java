@@ -69,7 +69,7 @@ public class HtmlTransformer {
         for (int i = 0; i < articles.size(); i++) {
             Article article = articles.get(i);
             User user = users.get(i);
-            String formatted = String.format(content, user.getNickname(), article.getId(), article.getContent());
+            String formatted = String.format(content, user.getNickname(), article.getImageName(), article.getId(), article.getContent());
             articlesComponent.append(formatted);
         }
         return String.format(originHtml, articlesComponent);

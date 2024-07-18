@@ -3,16 +3,15 @@ package codesquad.handler;
 import codesquad.database.ArticleRepository;
 import codesquad.database.H2Config;
 import codesquad.database.UserRepository;
-import codesquad.error.HttpStatusException;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.MediaType;
-import codesquad.http.StatusCode;
 import codesquad.http.session.SessionContext;
 import codesquad.http.session.SessionContextHolder;
 import codesquad.model.Article;
 import codesquad.model.User;
 import codesquad.resource.DirectoryIndexResolver;
+import codesquad.resource.ImageReader;
 import codesquad.resource.Resource;
 import codesquad.resource.transform.HtmlTransformer;
 
@@ -41,7 +40,7 @@ public class DynamicResourceHandler extends RequestHandler {
     protected HttpResponse handleGet(HttpRequest httpRequest) {
         String uri = httpRequest.uri();
         Resource resource = directoryIndexResolver.resolve(uri)
-                .orElseThrow(() -> new HttpStatusException(StatusCode.NOT_FOUND, "[ERROR] 파일을 찾을 수 없습니다."));
+                .orElseGet(() -> ImageReader.read(uri));
         if (!resource.getExtension().equals("html")) {
             return responseGenerator.sendOK(resource.getContent(), MediaType.find(resource.getExtension()), httpRequest);
         }
