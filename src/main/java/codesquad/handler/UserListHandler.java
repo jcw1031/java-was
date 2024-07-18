@@ -2,7 +2,7 @@ package codesquad.handler;
 
 import codesquad.database.H2Config;
 import codesquad.database.UserRepository;
-import codesquad.error.HttpStatusException;
+import codesquad.error.HttpRequestException;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.MediaType;
@@ -36,7 +36,7 @@ public class UserListHandler extends AuthenticatedHandler {
     @Override
     protected HttpResponse handleGet(HttpRequest httpRequest) {
         Resource resource = directoryIndexResolver.resolve("/user/index.html")
-                .orElseThrow(() -> new HttpStatusException(StatusCode.NOT_FOUND));
+                .orElseThrow(() -> new HttpRequestException(StatusCode.NOT_FOUND));
         String content = new String(resource.getContent());
         List<User> users = userRepository.findAll();
 
