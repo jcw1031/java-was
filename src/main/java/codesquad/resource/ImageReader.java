@@ -16,7 +16,7 @@ public class ImageReader {
         try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             inputStream.read(content);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return null;
         }
         return Resource.file(fileName, content);
     }
