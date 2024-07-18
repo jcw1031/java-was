@@ -21,8 +21,8 @@ public final class ArticleRepository {
     }
 
     public void save(Article article) {
-        String sql = "INSERT INTO article (content, userId) VALUES (?, ?)";
-        jdbcTemplate.update(sql, article.getContent(), article.getUserId());
+        String sql = "INSERT INTO article (content, imageName, userId) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, article.getContent(), article.getImageName(), article.getUserId());
     }
 
     public List<Article> findAll() {
