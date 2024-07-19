@@ -8,7 +8,7 @@ public final class ArticleRepository {
 
     private static ArticleRepository instance;
 
-    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance(H2Config.standard());
+    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
 
     private ArticleRepository() {
     }

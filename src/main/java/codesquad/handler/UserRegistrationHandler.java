@@ -1,6 +1,5 @@
 package codesquad.handler;
 
-import codesquad.database.H2Config;
 import codesquad.database.UserRepository;
 import codesquad.error.HttpRequestException;
 import codesquad.handler.dto.RegistrationRequest;
@@ -14,7 +13,7 @@ public final class UserRegistrationHandler extends RequestHandler {
     private static UserRegistrationHandler instance;
 
     private final ObjectMapper objectMapper = ObjectMapper.getInstance();
-    private final UserRepository userRepository = UserRepository.getInstance(H2Config.standard());
+    private final UserRepository userRepository = UserRepository.getInstance();
 
     private UserRegistrationHandler() {
     }

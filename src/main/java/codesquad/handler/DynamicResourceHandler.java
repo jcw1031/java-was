@@ -1,7 +1,6 @@
 package codesquad.handler;
 
 import codesquad.database.ArticleRepository;
-import codesquad.database.H2Config;
 import codesquad.database.UserRepository;
 import codesquad.error.HttpRequestException;
 import codesquad.http.HttpRequest;
@@ -26,7 +25,7 @@ public class DynamicResourceHandler extends RequestHandler {
 
     private final DirectoryIndexResolver directoryIndexResolver = DirectoryIndexResolver.getInstance();
     private final ArticleRepository articleRepository = ArticleRepository.getInstance();
-    private final UserRepository userRepository = UserRepository.getInstance(H2Config.standard());
+    private final UserRepository userRepository = UserRepository.getInstance();
 
     private DynamicResourceHandler() {
     }
