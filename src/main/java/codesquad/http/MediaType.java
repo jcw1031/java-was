@@ -37,7 +37,7 @@ public enum MediaType {
 
     public static MediaType find(String extension) {
         return Arrays.stream(values())
-                .filter(type -> type.fileExtension.contains(extension))
+                .filter(type -> type.fileExtension.contains(extension.toLowerCase()))
                 .findFirst()
                 .orElseThrow(() -> new HttpRequestException(StatusCode.BAD_REQUEST, "[ERROR] 지원하지 않는 파일 형식입니다."));
     }
