@@ -19,48 +19,33 @@ public final class HttpRequestReader {
     }
 
     public String readHeader(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream headerOutputStream = new ByteArrayOutputStream();
-
-        int consecutiveNewlines = 0;
-        int previousByte = -1;
-        int currentByte;
-
-        while ((currentByte = inputStream.read()) != -1) {
-            headerOutputStream.write(currentByte);
-
-            if (currentByte == '\n') {
-                if (previousByte == '\r') {
-                    consecutiveNewlines++;
-                    if (consecutiveNewlines == 2) {
-                        break;
-                    }
-                } else {
-                    consecutiveNewlines = 0;
-                }
-            } else if (currentByte != '\r') {
-                consecutiveNewlines = 0;
+        StringBuilder headerText = new StringBuilder();
+        while (true) {
+            String line = readLine(inputStream);
+            headerText.append(line)
+                    .append("\r\n");
+            if (line.isEmpty()) {
+                return headerText.toString();
             }
-            previousByte = currentByte;
         }
+    }
 
-        if (consecutiveNewlines != 2) {
-            String string = headerOutputStream.toString();
-            System.out.println("string = " + string);
-            throw new IOException("Header not properly terminated");
+    private String readLine(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream lineOutputStream = new ByteArrayOutputStream();
+        int currentByte;
+        while ((currentByte = inputStream.read()) != -1) {
+            if (currentByte == '\r' && inputStream.read() == '\n') {
+                break;
+            }
+            lineOutputStream.write(currentByte);
         }
-        return headerOutputStream.toString();
+        return lineOutputStream.toString();
+
     }
 
     public byte[] readBody(InputStream inputStream, int contentLength) throws IOException {
         byte[] body = new byte[contentLength];
-        int bytesRead = 0;
-        while (bytesRead < contentLength) {
-            int read = inputStream.read(body, bytesRead, contentLength - bytesRead);
-            if (read == -1) {
-                throw new IOException("Unexpected end of stream while reading body");
-            }
-            bytesRead += read;
-        }
+        inputStream.readNBytes(body, 0, contentLength);
         return body;
     }
 }
